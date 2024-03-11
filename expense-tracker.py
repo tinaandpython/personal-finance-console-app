@@ -1,10 +1,10 @@
 import sqlite3
 
-# Establishing connection and cursor
+
 with sqlite3.connect('personal_finance.db') as conn:
     c = conn.cursor()
 
-    # Creating the table if it doesn't exist
+
     create_table_sql = """
     CREATE TABLE IF NOT EXISTS finances (
         id INTEGER PRIMARY KEY,
