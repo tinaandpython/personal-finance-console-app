@@ -1,23 +1,21 @@
 import sqlite3
 
-conn = sqlite3.connect('personal_finance.db')
+# Establishing connection and cursor
+with sqlite3.connect('personal_finance.db') as conn:
+    c = conn.cursor()
 
-c = conn.cursor()
+    # Creating the table if it doesn't exist
+    create_table_sql = """
+    CREATE TABLE IF NOT EXISTS finances (
+        id INTEGER PRIMARY KEY,
+        finance_type STRING,
+        amount FLOAT,
+        category STRING
+    );
+    """
+    c.execute(create_table_sql)
+    conn.commit()
 
-create_table_sql = """
-CREATE TABLE IF NOT EXISTS finances (
-    id INTEGER PRIMARY KEY,
-    finance_type STRING,
-    amount FLOAT,
-    category STRING
-);
-"""
-
-c.execute(create_table_sql)
-
-conn.commit()
-
-with conn:
     while True:
         print("Please choose an option:")
         print("1. Enter income")
@@ -36,7 +34,6 @@ with conn:
             category = str(input("Enter income category: "))
             insert_data_sql = "INSERT INTO finances (finance_type, amount, category) VALUES (?,?,?)"
             c.execute(insert_data_sql, (finance_type, amount, category))
-            conn.commit()
 
         elif option == 2:
             finance_type = "Expenses"
@@ -44,7 +41,6 @@ with conn:
             category = str(input("Enter expense category: "))
             insert_data_sql = "INSERT INTO finances (finance_type, amount, category) VALUES (?,?,?)"
             c.execute(insert_data_sql, (finance_type, amount, category))
-            conn.commit()
 
         elif option == 3:
             select_balance_sql = """
@@ -93,7 +89,6 @@ with conn:
                  WHERE id = ?
             """
             c.execute(delete_input_sql, (delete_input,))
-            conn.commit()
 
         elif option == 7:
             update_row = int(input("Enter the row ID: "))
@@ -107,17 +102,12 @@ with conn:
                         WHERE id = ?
                     """
                 c.execute(update_data_sql, (updated_value, update_row))
-                conn.commit()
             else:
                 print("Invalid column name")
-
 
         elif option == 8:
             print("Thank you for using the finance tracker")
             exit()
+
         else:
             print("The selected option does not exist")
-
-            conn.close()
-
-
